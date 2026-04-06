@@ -1,0 +1,66 @@
+
+@BASE_URL = http://localhost:3000
+
+
+### Get API Root Info
+GET {{BASE_URL}}/
+
+
+### Health Check
+GET {{BASE_URL}}/health
+
+
+### Register a new user
+POST {{BASE_URL}}/api/auth/register
+Content-Type: application/json
+
+{
+  "name": "Jonson Carter",       
+  "email": "kinih12939@fengnu.com",    
+  "password": "12345678" 
+}
+
+
+### Login user
+POST {{BASE_URL}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "kinih12939@fengnu.com",     
+  "password": "12345678"         
+}
+
+
+### Logout user
+POST {{BASE_URL}}/api/auth/logout
+
+
+### Refresh access token
+POST {{BASE_URL}}/api/auth/refresh
+
+
+### Get current user profile
+GET {{BASE_URL}}/api/users/me
+
+
+### Change user password
+PATCH {{BASE_URL}}/api/users/change-password
+Content-Type: application/json
+
+{
+  "oldPassword": "123456789",    
+  "newPassword": "newStrongPass" 
+}
+
+
+### Update current user profile
+PATCH {{BASE_URL}}/api/users/me
+Content-Type: application/json
+
+{
+  "name": "Jonson Carter"   
+}
+
+
+### Get all user sessions
+GET {{BASE_URL}}/api/sessions
