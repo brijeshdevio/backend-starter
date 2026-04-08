@@ -129,37 +129,38 @@ export class AuthService {
   }
 
   async refresh(token: string) {
-    try {
-      const tokenHash = hashString(token);
+    const tokenHash = hashString(token);
 
-      const refreshToken = await prisma.refreshToken.delete({
-        where: { tokenHash, expiresAt: { gt: new Date() } },
-        include: {
-          session: true,
+    return await prisma.$transaction(async (tx) => {
+      const existing = await tx.refreshToken.findUnique({
+        where: { tokenHash },
+        include: { session: true },
+      });
+
+      if (!existing || existing.expiresAt <= new Date()) {
+        // Potential token reuse — invalidate the entire session
+        if (existing) {
+          await tx.session.delete({ where: { id: existing.sessionId } });
+        }
+        throw new ForbiddenException("Invalid or expired token");
+      }
+
+      await tx.refreshToken.delete({ where: { id: existing.id } });
+
+      const newToken = randomString(64);
+      const newTokenHash = hashString(newToken);
+      await tx.refreshToken.create({
+        data: {
+          tokenHash: newTokenHash,
+          expiresAt: this.calculateExpiry(TOKEN_EXPIRY.REFRESH_TOKEN_MS),
+          sessionId: existing.sessionId,
         },
       });
 
-      if (!refreshToken) {
-        throw new ForbiddenException("Invalid or expired token");
-      }
-
-      const newRefreshToken = await this.createRefreshToken(
-        refreshToken.sessionId,
-      );
-
       return {
-        accessToken: signJwt({ sub: refreshToken.session.userId }),
-        refreshToken: newRefreshToken,
+        accessToken: signJwt({ sub: existing.session.userId }),
+        refreshToken: newToken,
       };
-    } catch (error) {
-      if (error instanceof HttpException) throw error;
-      if (
-        error instanceof PrismaClientKnownRequestError &&
-        error.code === PRISMA_CODES.NOT_FOUND
-      ) {
-        throw new ForbiddenException("Invalid or expired token");
-      }
-      throw new InternalServerErrorException();
-    }
+    });
   }
 }
