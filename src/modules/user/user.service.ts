@@ -54,6 +54,7 @@ export class UserService {
   async changePassword(id: string, data: ChangePasswordDto) {
     const user = await prisma.user.findUnique({
       where: { id },
+      select: { passwordHash: true },
     });
 
     if (!user) {
@@ -70,14 +71,15 @@ export class UserService {
       throw new ForbiddenException("Invalid old password.");
     }
 
-    await prisma.user.update({
-      where: { id },
-      data: {
-        passwordHash: await hashPassword(data.newPassword),
-      },
-    });
-
-    // Invalidate all existing sessions after password change
-    await prisma.session.deleteMany({ where: { userId: id } });
+    // Atomically update password and invalidate all sessions
+    await prisma.$transaction([
+      prisma.user.update({
+        where: { id },
+        data: {
+          passwordHash: await hashPassword(data.newPassword),
+        },
+      }),
+      prisma.session.deleteMany({ where: { userId: id } }),
+    ]);
   }
 }
