@@ -8,7 +8,7 @@ import { apiResponse } from "./utils/apiResponse";
 import { ERROR_CODES } from "./constants";
 import { errorMiddleware } from "./middleware/error.middleware";
 import { routes } from "./routes";
-import { createRateLimiter } from "./middleware/rateLimite.middleware";
+import { createRateLimiter } from "./middleware/rateLimiter.middleware";
 import { prisma } from "./lib/prisma";
 
 const app = express();

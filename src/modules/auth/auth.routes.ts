@@ -5,7 +5,7 @@ import { validateMiddleware } from "../../middleware/validate.middleware";
 import { LoginSchema, RegisterSchema } from "./auth.schema";
 import { authMiddleware } from "../../middleware/auth.middleware";
 import { refreshTokenMiddleware } from "./auth.middleware";
-import { createRateLimiter } from "../../middleware/rateLimite.middleware";
+import { createRateLimiter } from "../../middleware/rateLimiter.middleware";
 
 export const authRouter = Router();
 const authController = new AuthController(new AuthService());
