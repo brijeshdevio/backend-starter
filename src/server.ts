@@ -1,6 +1,6 @@
 import { env } from "./config/env";
 import { logger } from "./lib/logger";
-import app from "@/app";
+import app from "./app";
 
 /**
  * Local development: start an HTTP server.
