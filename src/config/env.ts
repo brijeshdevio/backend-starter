@@ -4,18 +4,11 @@ import "dotenv/config";
 const envSchema = z.object({
   NODE_ENV: z.enum(["development", "production"]).default("development"),
   PORT: z.coerce.number().default(3000),
-  DATABASE_URL: z.url(),
-  JWT_SECRET: z.string().min(32),
-  FRONTEND: z.url(),
-  LOG_LEVEL: z
-    .enum(["fatal", "error", "warn", "info", "debug", "trace"])
-    .default("info"),
 });
 
 const parsed = envSchema.safeParse(process.env);
 
 if (!parsed.success) {
-  // Can't use lib/logger here since it depends on env being parsed
   console.error("❌ Invalid environment variables:");
   console.error(z.prettifyError(parsed.error));
   process.exit(1);
