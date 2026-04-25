@@ -2,7 +2,7 @@ import { Response } from "express";
 
 type ApiResponse<D, E> = {
   success?: boolean;
-  status: number;
+  status?: number;
   message?: string;
   data?: D;
   meta?: Record<string, any>;

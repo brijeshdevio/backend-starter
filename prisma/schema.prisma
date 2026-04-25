@@ -45,7 +45,7 @@ model Session {
 
 model RefreshToken {
   id        String @id @default(cuid())
-  sessionId String @unique
+  sessionId String
 
   tokenHash String @unique
 

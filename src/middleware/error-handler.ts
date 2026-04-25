@@ -3,6 +3,7 @@ import { ZodError, ZodIssue } from "zod";
 import { apiResponse } from "../utils/api-response";
 import { ERROR_CODES } from "../constants";
 import { BadRequestException, HttpException } from "../utils/error";
+import { env } from "../config/env";
 
 const formatZodError = (issues: ZodIssue[]) => {
   return issues.map((issue) => ({
@@ -18,10 +19,12 @@ export const errorHandler = (
   next: NextFunction,
 ) => {
   if (err instanceof ZodError) {
-    throw new BadRequestException(
+    const formattedErrors = formatZodError(err.issues);
+    const badRequestError = new BadRequestException(
       "Validation Error",
-      formatZodError(err.issues),
+      formattedErrors,
     );
+    return apiResponse(res, badRequestError.toResponse());
   }
 
   if (err instanceof HttpException) {
@@ -35,7 +38,7 @@ export const errorHandler = (
     error: {
       code: ERROR_CODES.INTERNAL_SERVER_ERROR,
       details:
-        process.env.NODE_ENV === "development"
+        env.NODE_ENV === "development"
           ? err instanceof Error
             ? { message: err.message, stack: err.stack }
             : String(err)
