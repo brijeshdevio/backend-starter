@@ -7,8 +7,17 @@ export function validate<T extends z.ZodTypeAny>(
 ) {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const parsed = await schema.parseAsync(req[type]);
-      req[type] = parsed;
+      if (type === "body") {
+        req.body = await schema.parseAsync(req.body);
+      } else if (type === "query") {
+        req.validatedQuery = (await schema.parseAsync(
+          req.query,
+        )) as Request["query"];
+      } else if (type === "params") {
+        req.validatedParams = (await schema.parseAsync(
+          req.params,
+        )) as Request["params"];
+      }
       next();
     } catch (err) {
       next(err);
