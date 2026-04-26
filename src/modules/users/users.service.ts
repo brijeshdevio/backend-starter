@@ -21,7 +21,7 @@ export class UsersService {
     }
     const skip = (query.page - 1) * query.limit;
     const take = query.limit;
-    console.log(Date.now());
+
     const users = await prisma.user.findMany({
       where,
       skip,
@@ -35,7 +35,6 @@ export class UsersService {
       },
     });
     const total = await prisma.user.count({ where, skip, take });
-    console.log(Date.now());
 
     return {
       users,
