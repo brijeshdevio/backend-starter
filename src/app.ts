@@ -41,8 +41,12 @@ app.use((req, res, next) => {
   next();
 });
 
-app.get("/api", (_, res) => {
+app.get("/", (_, res) => {
   res.send(`Welcome to the Backend Starter!`);
+});
+
+app.get("/health", (_, res) => {
+  res.status(200).json({ status: "ok" });
 });
 
 app.use("/api/v1", routes);
