@@ -6,6 +6,7 @@ import { routes } from "./routes";
 import { env } from "./config/env";
 import { errorHandler } from "./middleware/error-handler";
 import { logger } from "./lib/logger";
+import { rateLimit } from "./middleware/rate-limit";
 
 export const app = express();
 
@@ -21,6 +22,7 @@ app.use(
 app.use(express.urlencoded({ extended: true, limit: "10kb" }));
 app.use(cookieParser());
 app.set("trust proxy", 1);
+app.use(rateLimit());
 
 app.use((req, res, next) => {
   const start = Date.now();
