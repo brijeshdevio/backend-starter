@@ -3,7 +3,7 @@ import { verify } from "jsonwebtoken";
 import { UnauthorizedException } from "../utils/error";
 import { env } from "../config/env";
 
-export function authenticate(req: Request, res: Response, next: NextFunction) {
+export function authGuard(req: Request, res: Response, next: NextFunction) {
   const token =
     req.cookies?.["accessToken"] ||
     req.headers.authorization?.replace("Bearer ", "");

@@ -3,7 +3,7 @@ import { AuthController } from "./auth.controller";
 import { AuthService } from "./auth.service";
 import { validate } from "../../middleware/validate";
 import { LoginSchema, RegisterSchema } from "./auth.schema";
-import { authenticate } from "../../middleware/authenticate";
+import { authGuard } from "../../middleware/auth-guard";
 import { rateLimit } from "../../middleware/rate-limit";
 
 export const authRoutes = Router();
@@ -20,5 +20,5 @@ authRoutes.post(
   controllers.login,
 );
 authRoutes.post("/refresh", controllers.refresh);
-authRoutes.post("/logout", authenticate, controllers.logout);
-authRoutes.get("/me", authenticate, controllers.getMe);
+authRoutes.post("/logout", authGuard, controllers.logout);
+authRoutes.get("/me", authGuard, controllers.getMe);
