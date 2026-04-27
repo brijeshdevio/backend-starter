@@ -1,5 +1,6 @@
 import { z } from "zod";
 import "dotenv/config";
+import { logger } from "../lib/logger";
 
 const envSchema = z.object({
   NODE_ENV: z.enum(["development", "production"]).default("development"),
@@ -10,6 +11,10 @@ const envSchema = z.object({
     .min(32, "JWT_SECRET must be at least 32 characters long")
     .default("your-default-jwt-secret-key-please-change-this"),
   JWT_EXPIRES_IN: z.string().default("15m"),
+  CLIENT_URL: z.url().default("http://localhost:5173"),
+  LOG_LEVEL: z
+    .enum(["trace", "debug", "info", "warn", "error", "fatal"])
+    .default("info"),
 });
 
 const parsed = envSchema.safeParse(process.env);
